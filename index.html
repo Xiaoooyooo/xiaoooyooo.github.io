@@ -1,11 +1,116 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hello World</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        html,body {
+            width: 100%;
+            height: 100%;
+        }
+        body {
+            position: relative;
+            background: url(./d571a9b252b68cfc0292a5b2ffa4620e.jpg) no-repeat center;
+            background-size: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        h1 {
+            position: absolute;
+            text-align: center;
+        }
+        #title {
+            top: 10%;
+        }
+        #btn {
+            color: white;
+            bottom: 5%;
+            cursor: pointer;
+            animation-fill-mode: forwards;
+        }
+        .fade-in {
+            pointer-events: none;
+            animation: 1s ease fade-in;
+        }
+        @keyframes fade-in{
+            from {
+                opacity: 0;
+            } to {
+                opacity: 1;
+            }
+        }
+        .fade-out {
+            pointer-events: none;
+            animation: 1s ease fade-out;
+        }
+        @keyframes fade-out {
+            from {
+                transform: scale(1);
+            } to {
+                transform: scale(1.5);
+                opacity: 0;
+            }
+        }
+        #timer {
+            /* color: whitesmoke; */
+            color: rgb(calc(100 / 2),calc(100 / 2),calc(100 / 2));
+            font-size: 80px;
+        }
+    </style>
 </head>
 <body>
-    <h1 align='center'>Hello World!</h1>
+    <h1 id='title'>Hello World!</h1>
+    <h2 id='timer'>00 : 00 : 00</h2>
+    <h1 id='btn'>Why not listen to some music?</h1>
+    <audio id='player' src="./李子阳 - 你那边还好吗.mp3" loop></audio>
+    <script>
+        let ctx = document.querySelector('#timer')
+        let player = document.querySelector("#player")
+        let btn = document.querySelector('#btn')
+        player.volume = 0.5
+
+        function timerFunc(){
+            let now = new Date
+            let h = now.getHours()
+            let m = now.getMinutes()
+            let s = now.getSeconds()
+            ctx.innerText = `${String(h).padStart(2,'0')} : ${String(m).padStart(2,'0')} : ${String(s).padStart(2,'0')}`
+        }
+        let timer = setInterval(timerFunc,100)
+
+        let { log } = console
+        
+        btn.addEventListener('click',function(){
+            if(player.paused == false){
+                player.pause()
+                btn.classList.add('fade-out')
+                setTimeout(() => {
+                    btn.innerText = 'Why not listen to some music?'
+                    btn.classList.remove('fade-out')
+                    btn.classList.add('fade-in')
+                    setTimeout(() => {
+                        btn.classList.remove('fade-in')
+                    }, 1000);
+                }, 1000);
+            }else{
+                player.play()
+                btn.classList.add('fade-out')
+                setTimeout(()=>{
+                    btn.innerText = 'Does it sound good?'
+                    btn.classList.remove('fade-out')
+                    btn.classList.add('fade-in')
+                    setTimeout(() => {
+                        btn.classList.remove('fade-in')
+                    }, 1000);
+                },1000)
+            }
+        })
+    </script>
 </body>
 </html>
