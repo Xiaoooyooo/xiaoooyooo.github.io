@@ -20,6 +20,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            overflow: hidden;
         }
         h1 {
             position: absolute;
@@ -59,6 +60,8 @@
         }
         #timer {
             /* color: whitesmoke; */
+            position: relative;
+            user-select: none;
             color: rgb(calc(100 / 2),calc(100 / 2),calc(100 / 2));
             font-size: 80px;
         }
@@ -66,7 +69,7 @@
 </head>
 <body>
     <h1 id='title'>Hello World!</h1>
-    <h2 id='timer'>00 : 00 : 00</h2>
+    <h2 id='timer' draggable='true' style='left:0;top:0;'>00 : 00 : 00</h2>
     <h1 id='btn'>Why not listen to some music?</h1>
     <audio id='player' src="./李子阳 - 你那边还好吗.mp3" loop></audio>
     <script>
@@ -111,6 +114,29 @@
                 },1000)
             }
         })
+        let x,y,times = 0
+        let img = new Image
+        img.src = null
+        ctx.ondragstart = function(e){
+            x = e.clientX
+            y = e.clientY
+            e.dataTransfer.setDragImage(img,0,0)
+        }
+        ctx.ondrag = function(e){
+            if(times == 0){
+                times++
+                return
+            }
+            e.target.style.left = `${parseInt(e.target.style.left) + e.clientX - x}px`
+            e.target.style.top = `${parseInt(e.target.style.top) + e.clientY - y}px`
+            x = e.clientX
+            y = e.clientY
+        }
+        ctx.ondragend = function(e){
+            e.target.style.left = `${parseInt(e.target.style.left) + e.clientX - x}px`
+            e.target.style.top = `${parseInt(e.target.style.top) + e.clientY - y}px`
+            times = 0
+        }
     </script>
 </body>
 </html>
