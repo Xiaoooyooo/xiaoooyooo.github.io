@@ -46,3 +46,26 @@
 .getCityInfo :nth-child(3):hover{
 	background: darkgreen;
 }
+.downloadReadyAnimation{
+	animation: ani .5s ease;
+}
+@keyframes ani{
+	0% {
+		transform: rotate(0deg);
+	}
+	20% {
+		transform: rotate(40deg);
+	}
+	40% {
+		transform: rotate(-30deg);
+	}
+	60% {
+		transform: rotate(20deg);
+	}
+	80% {
+		transform: rotate(-10deg);
+	}
+	100% {
+		transform: rotate(0deg);
+	}
+}

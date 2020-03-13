@@ -1,4 +1,3 @@
-
 let getCityInfoBtn = document.querySelector("[value='Get']")
 let cityCodeInput = document.getElementById('cityCode')
 let download = document.getElementById('download')
@@ -12,12 +11,17 @@ getCityInfoBtn.addEventListener('click', function () {
     let xhr = new XMLHttpRequest
     xhr.open("get", url)
     xhr.onload = function () {
-        // console.log(JSON.parse(this.response))
-        let res = JSON.parse(this.response).districts[0]
-        // console.log(res)
-        console.log("行政区名:", res.name)
-        console.log(res.polyline)
-        createCSVFile(res.polyline.split(';'), res.name)
+        try {
+            // console.log(JSON.parse(this.response))
+            let res = JSON.parse(this.response).districts[0]
+            // console.log(res)
+            console.log("行政区名:", res.name)
+            console.log(res.polyline)
+            createCSVFile(res.polyline.split(';'), res.name)
+        }catch(err){
+            alert('出错了，可能没有这个行政区的数据')
+            throw err
+        }
     }
     xhr.send()
 })
@@ -31,5 +35,9 @@ function createCSVFile(text, name) {
     download.download = `${name}.csv`
     download.style.pointerEvents = 'auto'
     download.classList.add('downloadReady')
+    download.classList.add('downloadReadyAnimation')
+    setTimeout(() => {
+        download.classList.remove('downloadReadyAnimation')
+    }, 500)
     download.innerText = "This is yours."
 }
