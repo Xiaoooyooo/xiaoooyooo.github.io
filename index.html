@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./city.css">
     <title>Hello World</title>
     <style>
         * {
@@ -66,12 +67,6 @@
             color: rgb(calc(100 / 2),calc(100 / 2),calc(100 / 2));
             font-size: 80px;
         }
-        .getCityInfo:nth-child(1) {
-
-        }
-        .getCityInfo:nth-child(2) {
-
-        }
     </style>
 </head>
 <body>
@@ -80,6 +75,7 @@
     <div class='getCityInfo'>
         <input type="text" id='cityCode' placeholder="此处输入行政区编码">
         <input type="button" value='Get'>
+        <a href='' id='download' style="pointer-events: none;">Nothing is Here.</a>
     </div>
     <h1 id='btn'>Why not listen to some music?</h1>
     <audio id='player' src="https://xiaoooyooo.xyz/sonder/music/你那边还好吗.mp3" loop></audio>
