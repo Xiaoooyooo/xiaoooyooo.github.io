@@ -18,6 +18,7 @@
             background: url(./d571a9b252b68cfc0292a5b2ffa4620e.jpg) no-repeat center;
             background-size: cover;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             overflow: hidden;
@@ -65,13 +66,24 @@
             color: rgb(calc(100 / 2),calc(100 / 2),calc(100 / 2));
             font-size: 80px;
         }
+        .getCityInfo:nth-child(1) {
+
+        }
+        .getCityInfo:nth-child(2) {
+
+        }
     </style>
 </head>
 <body>
     <h1 id='title'>Hello World!</h1>
     <h2 id='timer' draggable='true' style='left:0;top:0;'>00 : 00 : 00</h2>
+    <div class='getCityInfo'>
+        <input type="text" id='cityCode' placeholder="此处输入行政区编码">
+        <input type="button" value='Get'>
+    </div>
     <h1 id='btn'>Why not listen to some music?</h1>
     <audio id='player' src="https://xiaoooyooo.xyz/sonder/music/你那边还好吗.mp3" loop></audio>
+    <script src="./city.js"></script>
     <script>
         let ctx = document.querySelector('#timer')
         let player = document.querySelector("#player")
