@@ -24,7 +24,7 @@ getCityInfoBtn.addEventListener('click', function () {
 function createCSVFile(text, name) {
     let str = 'X,Y\n'
     text.forEach(el => {
-        str += el + ',\n'
+        str += el + '\n'
     })
     let uri = 'data:text/csv;charset=utf-8,\ufeff' + encodeURIComponent(str);
     download.href = uri
