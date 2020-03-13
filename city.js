@@ -12,6 +12,7 @@ getCityInfoBtn.addEventListener('click', function () {
     let xhr = new XMLHttpRequest
     xhr.open("get", url)
     xhr.onload = function () {
+        // console.log(JSON.parse(this.response))
         let res = JSON.parse(this.response).districts[0]
         // console.log(res)
         console.log("行政区名:", res.name)
@@ -23,11 +24,12 @@ getCityInfoBtn.addEventListener('click', function () {
 function createCSVFile(text, name) {
     let str = 'X,Y\n'
     text.forEach(el => {
-        str += el + ',\t\n'
+        str += el + ',\n'
     })
     let uri = 'data:text/csv;charset=utf-8,\ufeff' + encodeURIComponent(str);
     download.href = uri
     download.download = `${name}.csv`
     download.style.pointerEvents = 'auto'
+    download.classList.add('downloadReady')
     download.innerText = "This is yours."
 }
