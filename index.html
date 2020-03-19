@@ -1,152 +1,198 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./city.css">
-    <title>Hello World</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-        }
-        html,body {
-            width: 100%;
-            height: 100%;
-        }
-        body {
-            position: relative;
-            background: url(./d571a9b252b68cfc0292a5b2ffa4620e.jpg) no-repeat center;
-            background-size: cover;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
-        h1 {
-            position: absolute;
-            text-align: center;
-        }
-        #title {
-            top: 10%;
-        }
-        #btn {
-            color: white;
-            bottom: 5%;
-            cursor: pointer;
-            animation-fill-mode: forwards;
-        }
-        .fade-in {
-            pointer-events: none;
-            animation: 1s ease fade-in;
-        }
-        @keyframes fade-in{
-            from {
-                opacity: 0;
-            } to {
-                opacity: 1;
-            }
-        }
-        .fade-out {
-            pointer-events: none;
-            animation: 1s ease fade-out;
-        }
-        @keyframes fade-out {
-            from {
-                transform: scale(1);
-            } to {
-                transform: scale(1.5);
-                opacity: 0;
-            }
-        }
-        #timer {
-            /* color: whitesmoke; */
-            position: relative;
-            user-select: none;
-            color: rgb(calc(100 / 2),calc(100 / 2),calc(100 / 2));
-            font-size: 80px;
-        }
-    </style>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Hello World</title>
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+		}
+
+		html,
+		body {
+			width: 100%;
+			height: 100%;
+		}
+
+		body {
+			position: relative;
+			background: url(./d571a9b252b68cfc0292a5b2ffa4620e.jpg) no-repeat center;
+			background-size: cover;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			overflow: hidden;
+		}
+
+		.nav-bar {
+			position: absolute;
+			top: 0;
+			width: 100%;
+			padding: 0px 50px;
+			box-sizing: border-box;
+			display: flex;
+			justify-content: space-around;
+			background: rgba(255, 255, 255, 0.2);
+		}
+
+		.nav-item {
+			flex-grow: 1;
+			text-align: center;
+			overflow: hidden;
+		}
+
+		.nav-item a {
+			text-decoration: none;
+			display: block;
+			font-size: 30px;
+			line-height: 30px;
+			padding: 10px 10px;
+			color: white;
+			transition: all 0.3s ease;
+		}
+
+		.nav-item a:hover {
+			transform: scale(1.2);
+			background-color: rgba(255, 255, 255, 0.4);
+		}
+
+		h1 {
+			position: absolute;
+			text-align: center;
+		}
+
+		#title {
+			top: 10%;
+		}
+
+		#btn {
+			color: white;
+			bottom: 5%;
+			cursor: pointer;
+			animation-fill-mode: forwards;
+		}
+
+		.fade-in {
+			pointer-events: none;
+			animation: 1s ease fade-in;
+		}
+
+		@keyframes fade-in {
+			from {
+				opacity: 0;
+			}
+
+			to {
+				opacity: 1;
+			}
+		}
+
+		.fade-out {
+			pointer-events: none;
+			animation: 1s ease fade-out;
+		}
+
+		@keyframes fade-out {
+			from {
+				transform: scale(1);
+			}
+
+			to {
+				transform: scale(1.5);
+				opacity: 0;
+			}
+		}
+
+		#timer {
+			position: relative;
+			user-select: none;
+			color: rgb(calc(100 / 2), calc(100 / 2), calc(100 / 2));
+			font-size: 80px;
+		}
+	</style>
 </head>
+
 <body>
-    <h1 id='title'>Hello World!</h1>
-    <h2 id='timer' draggable='true' style='left:0;top:0;'>00 : 00 : 00</h2>
-    <div class='getCityInfo'>
-        <input type="text" id='cityCode' placeholder="此处输入行政区编码">
-        <input type="button" value='Get'>
-        <a href='' id='download' style="pointer-events: none;">Nothing is Here.</a>
-    </div>
-    <h1 id='btn'>Why not listen to some music?</h1>
-    <audio id='player' src="https://xiaoooyooo.xyz/sonder/music/你那边还好吗.mp3" loop></audio>
-    <script src="./city.js"></script>
-    <script>
-        let ctx = document.querySelector('#timer')
-        let player = document.querySelector("#player")
-        let btn = document.querySelector('#btn')
-        player.volume = 0.5
+	<nav class='nav-bar'>
+		<section class='nav-item'><a href="./getdistricts">行政区边界</a></section>
+		<section class='nav-item'><a href="javascript:;">test</a></section>
+	</nav>
+	<h1 id='title'>Hello World!</h1>
+	<h2 id='timer' draggable='true' style='left:0;top:0;'>00 : 00 : 00</h2>
+	<h1 id='btn'>Why not listen to some music?</h1>
+	<audio id='player' src="https://xiaoooyooo.xyz/sonder/music/你那边还好吗.mp3" loop></audio>
+	<script>
+		let ctx = document.querySelector('#timer')
+		let player = document.querySelector("#player")
+		let btn = document.querySelector('#btn')
+		player.volume = 0.5
 
-        function timerFunc(){
-            let now = new Date
-            let h = now.getHours()
-            let m = now.getMinutes()
-            let s = now.getSeconds()
-            ctx.innerText = `${String(h).padStart(2,'0')} : ${String(m).padStart(2,'0')} : ${String(s).padStart(2,'0')}`
-        }
-        let timer = setInterval(timerFunc,100)
+		function timerFunc() {
+			let now = new Date
+			let h = now.getHours()
+			let m = now.getMinutes()
+			let s = now.getSeconds()
+			ctx.innerText = `${String(h).padStart(2, '0')} : ${String(m).padStart(2, '0')} : ${String(s).padStart(2, '0')}`
+		}
+		let timer = setInterval(timerFunc, 100)
 
-        let { log } = console
-        
-        btn.addEventListener('click',function(){
-            if(player.paused == false){
-                player.pause()
-                btn.classList.add('fade-out')
-                setTimeout(() => {
-                    btn.innerText = 'Why not listen to some music?'
-                    btn.classList.remove('fade-out')
-                    btn.classList.add('fade-in')
-                    setTimeout(() => {
-                        btn.classList.remove('fade-in')
-                    }, 1000);
-                }, 1000);
-            }else{
-                player.play()
-                btn.classList.add('fade-out')
-                setTimeout(()=>{
-                    btn.innerText = 'Does it sound good?'
-                    btn.classList.remove('fade-out')
-                    btn.classList.add('fade-in')
-                    setTimeout(() => {
-                        btn.classList.remove('fade-in')
-                    }, 1000);
-                },1000)
-            }
-        })
+		let { log } = console
 
-        //拖动特效
-        let x,y,times = 0
-        let img = new Image
-        img.src = null
-        ctx.ondragstart = function(e){
-            x = e.clientX
-            y = e.clientY
-            e.dataTransfer.setDragImage(img,0,0)
-        }
-        ctx.ondrag = function(e){
-            if(times == 0){
-                times++
-                return
-            }
-            e.target.style.left = `${parseInt(e.target.style.left) + e.clientX - x}px`
-            e.target.style.top = `${parseInt(e.target.style.top) + e.clientY - y}px`
-            x = e.clientX
-            y = e.clientY
-        }
-        ctx.ondragend = function(e){
-            e.target.style.left = `${parseInt(e.target.style.left) + e.clientX - x}px`
-            e.target.style.top = `${parseInt(e.target.style.top) + e.clientY - y}px`
-            times = 0
-        }
-    </script>
+		btn.addEventListener('click', function () {
+			if (player.paused == false) {
+				player.pause()
+				btn.classList.add('fade-out')
+				setTimeout(() => {
+					btn.innerText = 'Why not listen to some music?'
+					btn.classList.remove('fade-out')
+					btn.classList.add('fade-in')
+					setTimeout(() => {
+						btn.classList.remove('fade-in')
+					}, 1000);
+				}, 1000);
+			} else {
+				player.play()
+				btn.classList.add('fade-out')
+				setTimeout(() => {
+					btn.innerText = 'Does it sound good?'
+					btn.classList.remove('fade-out')
+					btn.classList.add('fade-in')
+					setTimeout(() => {
+						btn.classList.remove('fade-in')
+					}, 1000);
+				}, 1000)
+			}
+		})
+
+		//拖动特效
+		let x, y, times = 0
+		let img = new Image
+		img.src = null
+		ctx.ondragstart = function (e) {
+			x = e.clientX
+			y = e.clientY
+			e.dataTransfer.setDragImage(img, 0, 0)
+		}
+		ctx.ondrag = function (e) {
+			if (times == 0) {
+				times++
+				return
+			}
+			e.target.style.left = `${parseInt(e.target.style.left) + e.clientX - x}px`
+			e.target.style.top = `${parseInt(e.target.style.top) + e.clientY - y}px`
+			x = e.clientX
+			y = e.clientY
+		}
+		ctx.ondragend = function (e) {
+			e.target.style.left = `${parseInt(e.target.style.left) + e.clientX - x}px`
+			e.target.style.top = `${parseInt(e.target.style.top) + e.clientY - y}px`
+			times = 0
+		}
+	</script>
 </body>
+
 </html>
