@@ -2,13 +2,13 @@
 	let body = document.querySelector('body')
 	let stage = document.querySelector('.stage')
 	let cursor = {}
-	body.onmousedown = function (e) {
+	document.onmousedown = function (e) {
 		cursor.oldX = e.clientX
 		cursor.oldY = e.clientY
-		body.onmousemove = move
+		document.onmousemove = move
 	}
-	body.onmouseup = function (e) {
-		body.onmousemove = null
+	document.onmouseup = function (e) {
+		document.onmousemove = null
 		stopAnimation()
 	}
 	function stopAnimation() {
