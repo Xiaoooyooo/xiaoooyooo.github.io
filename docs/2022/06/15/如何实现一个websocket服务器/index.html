@@ -1,0 +1,677 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" href="/img/favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#789395">
+  <meta name="author" content="Xiaoooyooo">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="如何实现一个websocket服务器本文将就如何搭建一个WebSocket服务器做较为细致的说明，关于WebSocket的定义以及优缺点不在此做说明。废话不多说，咱们进入正题。 连接建立客户端的实现利用WebSocketAPI很简单就能完成，难点主要在服务端，因为它与平常的GET或POST请求不一样。相同的是它们都基于http协议，不同的是WebSocket多了一些额外的请求头：Upgrade以及">
+<meta property="og:type" content="article">
+<meta property="og:title" content="如何实现一个websocket服务器">
+<meta property="og:url" content="https://xiaoooyooo.github.io/2022/06/15/%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AAwebsocket%E6%9C%8D%E5%8A%A1%E5%99%A8/index.html">
+<meta property="og:site_name" content="晓 ~">
+<meta property="og:description" content="如何实现一个websocket服务器本文将就如何搭建一个WebSocket服务器做较为细致的说明，关于WebSocket的定义以及优缺点不在此做说明。废话不多说，咱们进入正题。 连接建立客户端的实现利用WebSocketAPI很简单就能完成，难点主要在服务端，因为它与平常的GET或POST请求不一样。相同的是它们都基于http协议，不同的是WebSocket多了一些额外的请求头：Upgrade以及">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-06-15T09:15:31.000Z">
+<meta property="article:modified_time" content="2022-08-11T15:35:12.199Z">
+<meta property="article:author" content="Xiaoooyooo">
+<meta property="article:tag" content="NodeJs">
+<meta property="article:tag" content="WebSocket">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>如何实现一个websocket服务器 - 晓 ~</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hint.css@2/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"xiaoooyooo.github.io","root":"/","version":"1.9.2","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Xiaoyu</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/blog.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="如何实现一个websocket服务器"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-06-15 17:15" pubdate>
+          2022年6月15日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          <!-- compatible with older versions-->
+          6.5k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          <!-- compatible with older versions-->
+          55 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">如何实现一个websocket服务器</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="如何实现一个websocket服务器"><a href="#如何实现一个websocket服务器" class="headerlink" title="如何实现一个websocket服务器"></a>如何实现一个websocket服务器</h1><p>本文将就如何搭建一个<code>WebSocket</code>服务器做较为细致的说明，关于<code>WebSocket</code>的定义以及优缺点不在此做说明。废话不多说，咱们进入正题。</p>
+<h2 id="连接建立"><a href="#连接建立" class="headerlink" title="连接建立"></a>连接建立</h2><p>客户端的实现利用<code>WebSocket</code>API很简单就能完成，难点主要在服务端，因为它与平常的<code>GET</code>或<code>POST</code>请求不一样。相同的是它们都基于http协议，不同的是<code>WebSocket</code>多了一些额外的请求头：<code>Upgrade</code>以及一些以<code>Sec-WebSocket</code>开头的，后者我们主要关注的是<code>Sec-WebSocket-Key</code>。</p>
+<p>服务端接收到了该请求后，需要根据<code>Sec-WebSocket-Key</code>生成唯一的<code>Sec-WebSocket-Accept</code>头部返回给客户端，除此之外还有<code>Upgrade</code>和<code>Connection</code>，响应的状态码则是<code>101</code>。</p>
+<p>关于<code>Sec-WebSocket-Accept</code>是如何生成的，首先需要拿到客户端的<code>Sec-WebSocket-Key</code>，并将它与<code>258EAFA5-E914-47DA-95CA-C5AB0DC85B11</code>拼接得到一个新的字符串，再将该字符串通过<code>SHA-1</code>算法加密，最后将加密后的字符串再进行<code>Base64</code>编码即可得到。如果客户端发送的<code>Sec-WebSocket-Key</code>为<code>vEkgOIDVZcUj1Z+v5BnEnA==</code>，那么服务端响应的<code>Sec-WebSocket-Accept</code>应该为<code>i8L6RCkmdYEUXgBdVajZ9/nMg1U=</code>。</p>
+<blockquote>
+<p>在Node中进行<code>SHA-1</code>加密的算法：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">import</span> &#123; createHash &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;crypto&quot;</span>;<br><br><span class="hljs-keyword">function</span> <span class="hljs-title function_">sha1</span>(<span class="hljs-params">data</span>) &#123;<br>  <span class="hljs-keyword">return</span> <span class="hljs-title function_">createHash</span>(<span class="hljs-string">&quot;sha1&quot;</span>).<span class="hljs-title function_">update</span>(data).<span class="hljs-title function_">digest</span>();<br>&#125;<br></code></pre></td></tr></table></figure>
+</blockquote>
+<h2 id="数据交换"><a href="#数据交换" class="headerlink" title="数据交换"></a>数据交换</h2><p>在连接建立成功之后，在客户端尝试向服务端发送数据，会发现服务端接收到的数据是乱码（如果以字符串形式打印的话），这是因为客户端将数据进行编码了，我们还需要解码才能拿到其中的数据。</p>
+<h3 id="解码数据"><a href="#解码数据" class="headerlink" title="解码数据"></a>解码数据</h3><h3 id="第一个字节"><a href="#第一个字节" class="headerlink" title="第一个字节"></a>第一个字节</h3><ol>
+<li><p>第1位为FIN码，表示是否为最后一帧数据；</p>
+</li>
+<li><p>第2-4位为RSV码，用于扩展，可以忽略；</p>
+</li>
+<li><p>第5-8位为操作码，能够表示的操作如下：</p>
+<ul>
+<li><p>0x0: 表示一个延续帧。当 Opcode 为 0 时，表示本次数据传输采用了数据分片，当前收到的数据帧为其中一个数据分片</p>
+</li>
+<li><p>0x1: 表示这是一个文本帧</p>
+</li>
+<li><p>0x2: 表示这是一个二进制帧</p>
+</li>
+<li><p>0x3-0x7: 保留的操作码，暂时无意义</p>
+</li>
+<li><p>0x8: 表示连接被断开</p>
+</li>
+<li><p>0x9: 表示这是一个心跳请求(ping)</p>
+</li>
+<li><p>0xa: 表示这是一个心跳响应(pong)</p>
+</li>
+<li><p>0xb-0xf: 保留的操作码，暂时无意义</p>
+</li>
+</ul>
+</li>
+</ol>
+<h3 id="第二个字节"><a href="#第二个字节" class="headerlink" title="第二个字节"></a>第二个字节</h3><ol>
+<li><p>第1位为MASK码，表示是否使用掩码，客户端发送的数据帧必须使用掩码(1)，否则服务端应该主动断开连接，而服务端发送的数据帧不需要</p>
+</li>
+<li><p>第2-8位表示载荷长度，最大能够表示<code>0b1111111</code>，因而分几种情况：</p>
+<ul>
+<li><p>如果该部分数据小于十进制数字125，那么它就是有效载荷的长度</p>
+</li>
+<li><p>如果该部分数据等于十进制数字126，那么<strong>第3、第4个字节</strong>表示的数字即为有效载荷的长度</p>
+</li>
+<li><p>如果该部分数据等于十进制数字127，那么<strong>第3、第4、第5、第6个字节</strong>所表示的数字即为有效载荷的长度</p>
+</li>
+</ul>
+</li>
+</ol>
+<p>在解码出MASK码和载荷长度之后，接下来的四个字节即为<code>Masking key</code>，它被用来解码真正的载荷数据，解码步骤为：遍历载荷数据，记当前遍历字节为<code>i</code>(从0开始)，将当前字节与<code>Masking key</code>的第<code>i % 4</code>个字节做异或运算<code>^</code></p>
+<h3 id="解码算法"><a href="#解码算法" class="headerlink" title="解码算法"></a>解码算法</h3><p>下面的代码只做了文本帧数据的解码，二进制帧解码类似。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">export</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">client</span>(<span class="hljs-params">buffer</span>) &#123;<br>  <span class="hljs-comment">// 解读第一位 FIN 码</span><br>  <span class="hljs-keyword">const</span> firstByte = buffer.<span class="hljs-title function_">readUint8</span>(<span class="hljs-number">0</span>); <span class="hljs-comment">// 或者buffer[0]</span><br>  <span class="hljs-keyword">if</span> ((firstByte &gt;&gt; <span class="hljs-number">7</span>) &amp; <span class="hljs-number">0b1</span>) &#123;<br>    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;解码数据：这是最后一个数据帧&quot;</span>);<br>  &#125;<br>  <span class="hljs-comment">// 解读操作码</span><br>  <span class="hljs-keyword">const</span> op = firstByte &amp; <span class="hljs-number">0b1111</span>;<br>  <span class="hljs-keyword">if</span> (op === <span class="hljs-number">0x8</span>) &#123;<br>    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;解码数据：这是一个中断操作&quot;</span>);<br>    <span class="hljs-comment">// 中断连接操作码</span><br>    <span class="hljs-variable language_">this</span>.<span class="hljs-title function_">end</span>();<br>    <span class="hljs-keyword">return</span>;<br>  &#125;<br>  <span class="hljs-keyword">if</span> (op === <span class="hljs-number">0x1</span>) &#123;<br>    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;解码数据：这是一个文本帧&quot;</span>);<br>    <span class="hljs-comment">// 文本帧</span><br>    <span class="hljs-keyword">const</span> secondByte = buffer.<span class="hljs-title function_">readUInt8</span>(<span class="hljs-number">1</span>);<br>    <span class="hljs-comment">// 检查是否有 MASK 码</span><br>    <span class="hljs-keyword">if</span> (!((secondByte &gt;&gt;&gt; <span class="hljs-number">7</span>) &amp; <span class="hljs-number">0x1</span>)) <span class="hljs-keyword">return</span>;<br>    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;解码数据：该数据帧有 MASK 码&quot;</span>);<br>    <span class="hljs-keyword">const</span> payloadLen = secondByte &amp; <span class="hljs-number">0b1111111</span>;<br>    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;解码数据：payloadLen&quot;</span>, payloadLen);<br>    <span class="hljs-keyword">let</span> maskingKeyOffset = <span class="hljs-number">2</span>;<br>    <span class="hljs-keyword">let</span> maskingKey;<br>    <span class="hljs-keyword">if</span> (payloadLen &lt;= <span class="hljs-number">125</span>) &#123;<br>      <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;解码数据：payloadLen 小于等于 125&quot;</span>);<br>      maskingKeyOffset += <span class="hljs-number">0</span>;<br>    &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (payloadLen === <span class="hljs-number">126</span>) &#123;<br>      <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;解码数据：payloadLen 等于 126&quot;</span>);<br>      maskingKeyOffset += <span class="hljs-number">2</span>;<br>    &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (payloadLen === <span class="hljs-number">127</span>) &#123;<br>      <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;解码数据：payloadLen 等于 127&quot;</span>);<br>      maskingKeyOffset += <span class="hljs-number">4</span>;<br>    &#125;<br>    maskingKey = buffer.<span class="hljs-title function_">slice</span>(maskingKeyOffset, maskingKeyOffset + <span class="hljs-number">4</span>);<br>    <span class="hljs-keyword">const</span> payload = buffer.<span class="hljs-title function_">slice</span>(maskingKeyOffset + <span class="hljs-number">4</span>);<br>    <span class="hljs-keyword">const</span> data = [];<br>    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>, len = payload.<span class="hljs-property">byteLength</span>; i &lt; len; i++) &#123;<br>      data.<span class="hljs-title function_">push</span>(payload[i] ^ maskingKey[i % <span class="hljs-number">4</span>]);<br>    &#125;<br>    <span class="hljs-keyword">return</span> <span class="hljs-title class_">Buffer</span>.<span class="hljs-title function_">from</span>(data).<span class="hljs-title function_">toString</span>();<br>  &#125;<br>  <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;&quot;</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="服务端发送数据"><a href="#服务端发送数据" class="headerlink" title="服务端发送数据"></a>服务端发送数据</h3><p>服务端发送数据与解码的操作相似，只是不用添加掩码（Masking Key）</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">export</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">server</span>(<span class="hljs-params">data</span>) &#123;<br>  <span class="hljs-keyword">let</span> buffer, firstByte;<br>  <span class="hljs-keyword">if</span> (!data) &#123;<br>    data = <span class="hljs-string">&quot;no data!&quot;</span>;<br>  &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-title class_">Buffer</span>.<span class="hljs-title function_">isBuffer</span>(data)) &#123;<br>    firstByte = <span class="hljs-number">0b10000010</span>; <span class="hljs-comment">// 最终帧 &amp; 二进制帧</span><br>    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;加码数据：二进制数据&quot;</span>);<br>    buffer = data;<br>  &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (data <span class="hljs-keyword">instanceof</span> <span class="hljs-title class_">Object</span>) &#123;<br>    firstByte = <span class="hljs-number">0b10000001</span>; <span class="hljs-comment">// 最终帧 &amp; 文本帧</span><br>    data = <span class="hljs-title class_">JSON</span>.<span class="hljs-title function_">stringify</span>(data);<br>    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;加码数据：&quot;</span>, data);<br>    buffer = <span class="hljs-title class_">Buffer</span>.<span class="hljs-title function_">from</span>(data);<br>  &#125;<br>  <span class="hljs-keyword">const</span> bufferLen = buffer.<span class="hljs-property">byteLength</span>;<br>  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;加码数据：数据长度&quot;</span>, bufferLen);<br>  <span class="hljs-keyword">const</span> sendData = [];<br>  sendData.<span class="hljs-title function_">push</span>(firstByte);<br>  <span class="hljs-keyword">let</span> secondByte = <span class="hljs-number">0b00000000</span>; <span class="hljs-comment">// 没有掩码</span><br>  <span class="hljs-keyword">if</span> (bufferLen &lt;= <span class="hljs-number">125</span>) &#123;<br>    secondByte ^= bufferLen;<br>    sendData.<span class="hljs-title function_">push</span>(secondByte);<br>  &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (bufferLen &gt; <span class="hljs-number">0b1111101</span> &amp;&amp; bufferLen &lt; <span class="hljs-number">0b1111111111111111</span>) &#123;<br>    secondByte = <span class="hljs-number">0b1111110</span>;<br>    <span class="hljs-keyword">const</span> len = []; <span class="hljs-comment">// 用两个字节表示长度</span><br>    len.<span class="hljs-title function_">push</span>((bufferLen &gt;&gt;&gt; <span class="hljs-number">8</span>) &amp; <span class="hljs-number">0b11111111</span>);<br>    len.<span class="hljs-title function_">push</span>(bufferLen &amp; <span class="hljs-number">0b11111111</span>);<br>    sendData.<span class="hljs-title function_">push</span>(secondByte, ...len);<br>  &#125; <span class="hljs-keyword">else</span> &#123;<br>    secondByte = <span class="hljs-number">0b1111111</span>;<br>    <span class="hljs-keyword">const</span> len = []; <span class="hljs-comment">// 用四个字节表示长度</span><br>    len.<span class="hljs-title function_">push</span>((bufferLen &gt;&gt;&gt; <span class="hljs-number">24</span>) &amp; <span class="hljs-number">0b11111111</span>);<br>    len.<span class="hljs-title function_">push</span>((bufferLen &gt;&gt;&gt; <span class="hljs-number">16</span>) &amp; <span class="hljs-number">0b11111111</span>);<br>    len.<span class="hljs-title function_">push</span>((bufferLen &gt;&gt;&gt; <span class="hljs-number">8</span>) &amp; <span class="hljs-number">0b11111111</span>);<br>    len.<span class="hljs-title function_">push</span>(bufferLen &amp; <span class="hljs-number">0b11111111</span>);<br>    sendData.<span class="hljs-title function_">push</span>(secondByte, ...len);<br>  &#125;<br>  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;加码完成：&quot;</span>, <span class="hljs-title class_">Buffer</span>.<span class="hljs-title function_">from</span>([...sendData, ...buffer]));<br>  <span class="hljs-keyword">return</span> <span class="hljs-title class_">Buffer</span>.<span class="hljs-title function_">from</span>([...sendData, ...buffer]);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>服务端的代码如下：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">function</span> <span class="hljs-title function_">sha1</span>(<span class="hljs-params">data</span>) &#123;<br>  <span class="hljs-keyword">return</span> <span class="hljs-title function_">createHash</span>(<span class="hljs-string">&quot;sha1&quot;</span>).<span class="hljs-title function_">update</span>(data).<span class="hljs-title function_">digest</span>();<br>&#125;<br><br>http<br>  .<span class="hljs-title function_">createServer</span>(<span class="hljs-function">(<span class="hljs-params">req, res</span>) =&gt;</span> &#123;<br>    <span class="hljs-keyword">const</span> &#123; method, url, headers &#125; = req;<br>    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(method, url);<br>    <span class="hljs-keyword">if</span> (url === <span class="hljs-string">&quot;/&quot;</span> &amp;&amp; method === <span class="hljs-string">&quot;GET&quot;</span>) &#123;<br>      res.<span class="hljs-title function_">writeHead</span>(<span class="hljs-number">200</span>, &#123;<br>        <span class="hljs-string">&quot;content-type&quot;</span>: <span class="hljs-string">&quot;text/html&quot;</span>,<br>      &#125;);<br>      <span class="hljs-title function_">getFile</span>(<span class="hljs-string">&quot;./index.html&quot;</span>).<span class="hljs-title function_">then</span>(<span class="hljs-function">(<span class="hljs-params">index</span>) =&gt;</span> &#123;<br>        res.<span class="hljs-title function_">end</span>(index);<br>      &#125;);<br>      <span class="hljs-keyword">return</span>;<br>    &#125;<br>    res.<span class="hljs-property">statusCode</span> = <span class="hljs-number">404</span>;<br>    res.<span class="hljs-title function_">end</span>(<span class="hljs-string">&quot;not found&quot;</span>);<br>  &#125;)<br>  .<span class="hljs-title function_">on</span>(<span class="hljs-string">&quot;upgrade&quot;</span>, <span class="hljs-function">(<span class="hljs-params">req, socket, head</span>) =&gt;</span> &#123;<br>    <span class="hljs-keyword">if</span> (req.<span class="hljs-property">url</span> !== <span class="hljs-string">&quot;/socket&quot;</span>) &#123;<br>      <span class="hljs-keyword">return</span> socket.<span class="hljs-title function_">end</span>(<span class="hljs-string">&quot;http/1.1 400 Bad Request&quot;</span>);<br>    &#125;<br>    <span class="hljs-keyword">if</span> (req.<span class="hljs-property">headers</span>[<span class="hljs-string">&quot;upgrade&quot;</span>] !== <span class="hljs-string">&quot;websocket&quot;</span>) &#123;<br>      <span class="hljs-keyword">return</span> socket.<span class="hljs-title function_">end</span>(<span class="hljs-string">&quot;HTTP/1.1 400 Bad Request&quot;</span>);<br>    &#125;<br>    <span class="hljs-comment">// 检查子协议</span><br>    <span class="hljs-keyword">const</span> subProtocol = req.<span class="hljs-property">headers</span>[<span class="hljs-string">&quot;sec-websocket-protocol&quot;</span>];<br>    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;子协议&quot;</span>, subProtocol);<br>    <span class="hljs-keyword">if</span> (subProtocol &amp;&amp; subProtocol !== <span class="hljs-string">&quot;json&quot;</span>) &#123;<br>      <span class="hljs-keyword">return</span> socket.<span class="hljs-title function_">end</span>(<span class="hljs-string">&quot;HTTP/1.1 400 Bad Request&quot;</span>);<br>    &#125;<br>    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;server on upgrade&quot;</span>);<br>    <span class="hljs-comment">// 读取客户端提供的Sec-WebSocket-Key</span><br>    <span class="hljs-keyword">const</span> secWsKey = req.<span class="hljs-property">headers</span>[<span class="hljs-string">&quot;sec-websocket-key&quot;</span>];<br>    <span class="hljs-comment">// 使用SHA-1算法生成Sec-WebSocket-Accept</span><br>    <span class="hljs-keyword">const</span> hash = <span class="hljs-title class_">Buffer</span>.<span class="hljs-title function_">from</span>(<br>      <span class="hljs-title function_">sha1</span>(<span class="hljs-string">`<span class="hljs-subst">$&#123;secWsKey&#125;</span>258EAFA5-E914-47DA-95CA-C5AB0DC85B11`</span>)<br>    ).<span class="hljs-title function_">toString</span>(<span class="hljs-string">&quot;base64&quot;</span>);<br>    <span class="hljs-comment">// 设置HTTP响应头</span><br>    <span class="hljs-keyword">const</span> responseHeaders = [<br>      <span class="hljs-string">&quot;HTTP/1.1 101 WebSocket Protocol Handshake&quot;</span>,<br>      <span class="hljs-string">&quot;Upgrade: WebSocket&quot;</span>,<br>      <span class="hljs-string">&quot;Connection: Upgrade&quot;</span>,<br>      <span class="hljs-string">`Sec-WebSocket-Accept: <span class="hljs-subst">$&#123;hash&#125;</span>`</span>,<br>    ];<br>    <span class="hljs-keyword">if</span> (subProtocol) &#123;<br>      responseHeaders.<span class="hljs-title function_">push</span>(<span class="hljs-string">&quot;Sec-WebSocket-Protocol: json&quot;</span>);<br>    &#125;<br>    <span class="hljs-comment">// 返回握手请求的响应信息</span><br>    socket.<span class="hljs-title function_">write</span>(responseHeaders.<span class="hljs-title function_">join</span>(<span class="hljs-string">&quot;\r\n&quot;</span>) + <span class="hljs-string">&quot;\r\n\r\n&quot;</span>);<br>    <span class="hljs-comment">// sockets.emit(&quot;add&quot;, socket);</span><br>    socket.<span class="hljs-title function_">on</span>(<span class="hljs-string">&quot;data&quot;</span>, <span class="hljs-keyword">function</span> (<span class="hljs-params">e</span>) &#123;<br>      <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;ondata&quot;</span>, e);<br>      <span class="hljs-keyword">const</span> data = client.<span class="hljs-title function_">call</span>(<span class="hljs-variable language_">this</span>, e);<br>      <span class="hljs-keyword">if</span> (socket.<span class="hljs-property">writable</span>) &#123;<br>        <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;ondata&quot;</span>, data);<br>        <span class="hljs-keyword">const</span> send = &#123;<br>          <span class="hljs-attr">code</span>: <span class="hljs-number">200</span>,<br>          <span class="hljs-attr">message</span>: data,<br>        &#125;;<br>        socket.<span class="hljs-title function_">write</span>(<span class="hljs-title function_">server</span>(send));<br>      &#125;<br>    &#125;);<br>    socket.<span class="hljs-title function_">on</span>(<span class="hljs-string">&quot;close&quot;</span>, <span class="hljs-keyword">function</span> (<span class="hljs-params">e</span>) &#123;<br>      <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;onclose&quot;</span>, e);<br>    &#125;);<br>    socket.<span class="hljs-title function_">on</span>(<span class="hljs-string">&quot;error&quot;</span>, <span class="hljs-keyword">function</span> (<span class="hljs-params">err</span>) &#123;<br>      <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;onerror&quot;</span>, err);<br>    &#125;);<br>  &#125;)<br>  .<span class="hljs-title function_">listen</span>(<span class="hljs-number">8888</span>, <span class="hljs-function">() =&gt;</span> &#123;<br>    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;\n\thttp://127.0.0.1:8888\n&quot;</span>);<br>  &#125;);<br></code></pre></td></tr></table></figure>
+
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><p><a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/API/WebSockets_API/Writing_WebSocket_servers">编写 WebSocket 服务器 - Web API 接口参考 | MDN</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://developer.51cto.com/article/622153.html">你不知道的 WebSocket</a></p>
+</li>
+</ul>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E6%9C%8D%E5%8A%A1%E5%99%A8/" class="category-chain-item">服务器</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/NodeJs/">#NodeJs</a>
+      
+        <a href="/tags/WebSocket/">#WebSocket</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>如何实现一个websocket服务器</div>
+      <div>https://xiaoooyooo.github.io/2022/06/15/如何实现一个websocket服务器/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Xiaoooyooo</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年6月15日</div>
+        </div>
+      
+      
+      <div class="license-meta-item">
+        <div>许可协议</div>
+        <div>
+          
+            
+            
+              <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+              <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                <i class="iconfont icon-by"></i>
+              </span>
+              </a>
+            
+          
+        </div>
+      </div>
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/03/25/fetch%E8%AF%A6%E8%A7%A3/" title="fetch详解">
+                        <span class="hidden-mobile">fetch详解</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      headingSelector : CONFIG.toc.headingSelector || 'h1,h2,h3,h4,h5,h6',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      collapseDepth   : CONFIG.toc.collapseDepth || 0,
+      scrollSmooth    : true,
+      headingsOffset  : -boardTop
+    });
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+  });
+</script>
+
+
+  <script src=https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
