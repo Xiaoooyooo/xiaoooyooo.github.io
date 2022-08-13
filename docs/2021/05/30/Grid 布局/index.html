@@ -24,7 +24,7 @@
 <meta property="og:description" content="Grid 布局即网格布局，它将元素按行列分为多个不同的“块”，使子项目位于这些块中，从而能实现更为复杂的布局。它类似于flex布局，但是比flex布局更为强大。 使用grid布局的元素称为容器，其内部的直接子元素则为项目。 容器属性grid-template-columns, grid-template-rows前者用于定义容器的列，后者定义容器的行： 12345.el &amp;#123;    dis">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2021-05-30T13:23:43.000Z">
-<meta property="article:modified_time" content="2022-02-18T15:44:57.363Z">
+<meta property="article:modified_time" content="2022-08-13T03:49:49.196Z">
 <meta property="article:author" content="Xiaoooyooo">
 <meta property="article:tag" content="网页布局">
 <meta name="twitter:card" content="summary_large_image">
@@ -278,7 +278,7 @@
                 <h1 id="Grid-布局"><a href="#Grid-布局" class="headerlink" title="Grid 布局"></a>Grid 布局</h1><p>即网格布局，它将元素按行列分为多个不同的“块”，使子项目位于这些块中，从而能实现更为复杂的布局。它类似于flex布局，但是比flex布局更为强大。</p>
 <p>使用grid布局的元素称为容器，其内部的直接子元素则为项目。</p>
 <h2 id="容器属性"><a href="#容器属性" class="headerlink" title="容器属性"></a>容器属性</h2><h3 id="grid-template-columns-grid-template-rows"><a href="#grid-template-columns-grid-template-rows" class="headerlink" title="grid-template-columns, grid-template-rows"></a>grid-template-columns, grid-template-rows</h3><p>前者用于定义容器的列，后者定义容器的行：</p>
-<figure class="highlight css"><table><tr><td class="gutter"><div class="code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></div></td><td class="code"><pre><code class="hljs css"><span class="hljs-selector-class">.el</span> &#123;<br>    <span class="hljs-attribute">display</span>: grid;<br>    <span class="hljs-attribute">grid-template-columns</span>: <span class="hljs-number">100px</span> <span class="hljs-number">100px</span> <span class="hljs-number">100px</span>; <span class="hljs-comment">/* 定义3列，每列宽100px */</span><br>    <span class="hljs-attribute">grid-template-rows</span>: <span class="hljs-number">100px</span> <span class="hljs-number">100px</span> <span class="hljs-number">100px</span>; <span class="hljs-comment">/* 定义3行，每行高100px */</span><br>&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs css"><span class="hljs-selector-class">.el</span> &#123;<br>    <span class="hljs-attribute">display</span>: grid;<br>    <span class="hljs-attribute">grid-template-columns</span>: <span class="hljs-number">100px</span> <span class="hljs-number">100px</span> <span class="hljs-number">100px</span>; <span class="hljs-comment">/* 定义3列，每列宽100px */</span><br>    <span class="hljs-attribute">grid-template-rows</span>: <span class="hljs-number">100px</span> <span class="hljs-number">100px</span> <span class="hljs-number">100px</span>; <span class="hljs-comment">/* 定义3行，每行高100px */</span><br>&#125;<br></code></pre></td></tr></table></figure>
 
 <p>如果定义的每行每列宽高都一致的话，则可以使用<code>repeat</code>函数简写：</p>
 <figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs css"><span class="hljs-selector-class">.el</span> &#123;<br>    <span class="hljs-attribute">display</span>: grid;<br>    <span class="hljs-attribute">grid-template-columns</span>: <span class="hljs-built_in">repeat</span>(<span class="hljs-number">3</span>, <span class="hljs-number">100px</span>); <span class="hljs-comment">/* 定义3列，每列宽100px */</span><br>    <span class="hljs-attribute">grid-template-rows</span>: <span class="hljs-built_in">repeat</span>(<span class="hljs-number">3</span>, <span class="hljs-number">100px</span>); <span class="hljs-comment">/* 定义3行，每行高100px */</span><br>&#125;<br></code></pre></td></tr></table></figure>
@@ -360,7 +360,7 @@
     
       <span class="category-chain">
         
-  <a href="/categories/html/" class="category-chain-item">html</a>
+  <a href="/categories/HTML/" class="category-chain-item">HTML</a>
   
   
 
