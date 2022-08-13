@@ -12,6 +12,7 @@ while true
 do
   git push origin --set-upstream master;
   if [ $? -eq 0 ]
+  then
     echo -e "\e[32mPush to remote repository success\e[0m"
     break
   else
