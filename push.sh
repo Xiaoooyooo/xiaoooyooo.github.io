@@ -16,8 +16,8 @@ do
     echo -e "\e[32mPush to remote repository success\e[0m"
     break
   else
-    echo -e "\e[31mPush to remote repository failed, retry in 1 second...\e[0m"
-    sleep 2
+    echo -e "\e[31mPush to remote repository failed, retry in 3 second...\e[0m"
+    sleep 3
   fi
 done
 

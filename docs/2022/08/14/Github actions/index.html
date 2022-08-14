@@ -1,0 +1,674 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" href="/img/favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#789395">
+  <meta name="author" content="Xiaoooyooo">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="GitHub Actions 在 GitHub Actions 的仓库中自动化、自定义和执行软件开发工作流程。 您可以发现、创建和共享操作以执行您喜欢的任何作业（包括 CI&#x2F;CD），并将操作合并到完全自定义的工作流程中。  基本介绍一个操作可以看作是一个文件夹，其中包含一个action.yml或action.yaml的元数据文件（只能是这两个名称中的一个）。元数据文件都使用了yaml的语">
+<meta property="og:type" content="article">
+<meta property="og:title" content="GitHub Actions">
+<meta property="og:url" content="https://xiaoooyooo.github.io/2022/08/14/Github%20actions/index.html">
+<meta property="og:site_name" content="晓 ~">
+<meta property="og:description" content="GitHub Actions 在 GitHub Actions 的仓库中自动化、自定义和执行软件开发工作流程。 您可以发现、创建和共享操作以执行您喜欢的任何作业（包括 CI&#x2F;CD），并将操作合并到完全自定义的工作流程中。  基本介绍一个操作可以看作是一个文件夹，其中包含一个action.yml或action.yaml的元数据文件（只能是这两个名称中的一个）。元数据文件都使用了yaml的语">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-08-14T15:22:43.000Z">
+<meta property="article:modified_time" content="2022-08-14T15:25:08.915Z">
+<meta property="article:author" content="Xiaoooyooo">
+<meta property="article:tag" content="Github">
+<meta property="article:tag" content="Github Actions">
+<meta property="article:tag" content="Deploy">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>GitHub Actions - 晓 ~</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hint.css@2/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"xiaoooyooo.github.io","root":"/","version":"1.9.2","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Xiaoyu</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/blog.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="GitHub Actions"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-08-14 23:22" pubdate>
+          2022年8月14日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          <!-- compatible with older versions-->
+          3k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          <!-- compatible with older versions-->
+          26 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">GitHub Actions</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="GitHub-Actions"><a href="#GitHub-Actions" class="headerlink" title="GitHub Actions"></a>GitHub Actions</h1><blockquote>
+<p>在 GitHub Actions 的仓库中自动化、自定义和执行软件开发工作流程。 您可以发现、创建和共享操作以执行您喜欢的任何作业（包括 CI&#x2F;CD），并将操作合并到完全自定义的工作流程中。</p>
+</blockquote>
+<h2 id="基本介绍"><a href="#基本介绍" class="headerlink" title="基本介绍"></a>基本介绍</h2><p>一个操作可以看作是一个文件夹，其中包含一个<code>action.yml</code>或<code>action.yaml</code>的<strong>元数据文件</strong>（只能是这两个名称中的一个）。<br>元数据文件都使用了yaml的语法格式。 如果您是 YAML 的新用户，请参阅<a target="_blank" rel="noopener" href="https://www.codeproject.com/Articles/1214409/Learn-YAML-in-five-minutes">五分钟了解 YAML</a>。</p>
+<p>一个元数据文件需要包含以下内容：</p>
+<h3 id="name"><a href="#name" class="headerlink" title="name"></a>name</h3><p><strong>必要</strong>，操作的名称。 GitHub 在 Actions（操作）选项卡中显示 name，帮助从视觉上识别每项作业中的操作。</p>
+<h3 id="author"><a href="#author" class="headerlink" title="author"></a>author</h3><p>可选，操作的作者姓名。</p>
+<h3 id="description"><a href="#description" class="headerlink" title="description"></a>description</h3><p>可选，操作的简单介绍。</p>
+<h3 id="inputs"><a href="#inputs" class="headerlink" title="inputs"></a>inputs</h3><p>可选，对于该操作的输入。例如：</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs yml"><span class="hljs-attr">inputs:</span><br>  <span class="hljs-comment"># 输入的变量名为 numOctocats</span><br>  <span class="hljs-attr">numOctocats:</span><br>    <span class="hljs-attr">description:</span> <span class="hljs-string">&#x27;Number of Octocats&#x27;</span><br>    <span class="hljs-attr">required:</span> <span class="hljs-literal">false</span> <span class="hljs-comment"># 该输入不是必须的</span><br>    <span class="hljs-attr">default:</span> <span class="hljs-string">&#x27;1&#x27;</span> <span class="hljs-comment"># 该输入的默认值</span><br>  <span class="hljs-attr">octocatEyeColor:</span><br>    <span class="hljs-attr">description:</span> <span class="hljs-string">&#x27;Eye color of the Octocats&#x27;</span><br>    <span class="hljs-attr">required:</span> <span class="hljs-literal">true</span> <span class="hljs-comment"># 该输入是必须的</span><br></code></pre></td></tr></table></figure>
+
+<h4 id="inputs-1"><a href="#inputs-1" class="headerlink" title="inputs."></a>inputs.<input_id></h4><p><strong>必要</strong>，必须以字母或 _ 开头，并且只能包含字母数字、- 或 _。例如上面示例的<code>numOctocats</code>和<code>octocatEyeColor</code>。</p>
+<h4 id="inputs-description"><a href="#inputs-description" class="headerlink" title="inputs..description"></a>inputs.<input_id>.description</h4><p><strong>必要</strong>，输入参数的简单描述。</p>
+<h4 id="inputs-required"><a href="#inputs-required" class="headerlink" title="inputs..required"></a>inputs.<input_id>.required</h4><p><strong>可选</strong>，标注该输入是否为必须输入，<code>true</code>表示必须。</p>
+<h4 id="inputs-default"><a href="#inputs-default" class="headerlink" title="inputs..default"></a>inputs.<input_id>.default</h4><p>可选，当工作流程文件中未提供输入时使用该默认值。</p>
+<h4 id="inputs-deprecationMessage"><a href="#inputs-deprecationMessage" class="headerlink" title="inputs..deprecationMessage"></a>inputs.<input_id>.deprecationMessage</h4><p>可选，如果使用输入参数，此 string 将记录为警告消息。 您可以使用此警告通知用户输入已被弃用，并提及任何其他替代方式。</p>
+<h2 id="outputs"><a href="#outputs" class="headerlink" title="outputs"></a>outputs</h2><h3 id="用于-Docker-容器和-JavaScript-操作的-outputs"><a href="#用于-Docker-容器和-JavaScript-操作的-outputs" class="headerlink" title="用于 Docker 容器和 JavaScript 操作的 outputs"></a>用于 Docker 容器和 JavaScript 操作的 outputs</h3><p>可选，输出参数允许您声明操作所设置的数据。例如：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">outputs:</span><br>  <span class="hljs-attr">sum:</span> <span class="hljs-comment"># id of the output</span><br>    <span class="hljs-attr">description:</span> <span class="hljs-string">&#x27;The sum of the inputs&#x27;</span> <span class="hljs-comment"># 输出的简单描述</span><br></code></pre></td></tr></table></figure>
+
+<h4 id="outputs-1"><a href="#outputs-1" class="headerlink" title="outputs."></a>outputs.<output_id></h4><p><strong>必要</strong>，要与输出关联的识别符。如上面示例中的<code>sum</code>。</p>
+<h4 id="outputs-description"><a href="#outputs-description" class="headerlink" title="outputs..description"></a>outputs.<output_id>.description</h4><p><strong>必要</strong>，输出参数的简单描述。</p>
+<h3 id="用于复合操作的-outputs"><a href="#用于复合操作的-outputs" class="headerlink" title="用于复合操作的 outputs"></a>用于复合操作的 outputs</h3><p>可选，除了拥有与<code>用于 Docker 容器和 JavaScript 操作的 outputs</code>相同的参数之外还有一个<code>outputs.&lt;output_id&gt;.value</code>。例如：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">outputs:</span><br>  <span class="hljs-attr">random-number:</span><br>    <span class="hljs-attr">description:</span> <span class="hljs-string">&quot;Random number&quot;</span><br>    <span class="hljs-comment"># 将后续步骤中的某个输出定义为该操作的一个输出</span><br>    <span class="hljs-attr">value:</span> <span class="hljs-string">$&#123;&#123;</span> <span class="hljs-string">steps.random-number-generator.outputs.random-id</span> <span class="hljs-string">&#125;&#125;</span><br><span class="hljs-attr">runs:</span><br>  <span class="hljs-attr">using:</span> <span class="hljs-string">&quot;composite&quot;</span><br>  <span class="hljs-attr">steps:</span><br>    <span class="hljs-bullet">-</span> <span class="hljs-attr">id:</span> <span class="hljs-string">random-number-generator</span> <span class="hljs-comment"># 在其他地方可以使用 steps.random-number-generator 引用该步骤</span><br>      <span class="hljs-attr">run:</span> <span class="hljs-string">echo</span> <span class="hljs-string">&quot;::set-output name=random-id::$(echo $RANDOM)&quot;</span> <span class="hljs-comment"># @see https://docs.github.com/cn/actions/using-workflows/workflow-commands-for-github-actions#setting-an-output-parameter</span><br>      <span class="hljs-attr">shell:</span> <span class="hljs-string">bash</span><br></code></pre></td></tr></table></figure>
+
+<h4 id="outputs-value"><a href="#outputs-value" class="headerlink" title="outputs..value"></a>outputs.<output_id>.value</h4><p><strong>必要</strong>，输出参数将会映射到的值。您可以使用上下文将此设置为 string 或表达式。例如，您可以使用 steps 上下文将输出的 value 设置为步骤的输出值。</p>
+<h4 id="一些tips"><a href="#一些tips" class="headerlink" title="一些tips"></a>一些tips</h4><ul>
+<li>windows下无法更改文件的一些属性，这时可以使用git来修改。例如，更改文件的可执行属性：<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">git update-index --<span class="hljs-built_in">chmod</span>=+x path/to/file<br></code></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="runs"><a href="#runs" class="headerlink" title="runs"></a>runs</h2><h3 id="用于-JavaScript-操作的-runs"><a href="#用于-JavaScript-操作的-runs" class="headerlink" title="用于 JavaScript 操作的 runs"></a>用于 JavaScript 操作的 runs</h3><p><strong>必要</strong>，详见<a target="_blank" rel="noopener" href="https://docs.github.com/cn/actions/creating-actions/metadata-syntax-for-github-actions#runs-for-javascript-actions">用于 JavaScript 操作的 runs</a></p>
+<h3 id="用于复合操作的-runs"><a href="#用于复合操作的-runs" class="headerlink" title="用于复合操作的 runs"></a>用于复合操作的 runs</h3><p><strong>必要</strong></p>
+<h4 id="runs-using"><a href="#runs-using" class="headerlink" title="runs.using"></a>runs.using</h4><p><strong>必要</strong>，必须将此值设置为<code>composite</code>。</p>
+<h3 id="steps"><a href="#steps" class="headerlink" title="steps"></a>steps</h3><p><strong>必要</strong>，您计划在此操作中的步骤。 这些步骤可以是<code>run</code>步骤或<code>uses</code>步骤。</p>
+<h4 id="runs-steps-name"><a href="#runs-steps-name" class="headerlink" title="runs.steps[*].name"></a>runs.steps[*].name</h4><p>可选，步骤的名称</p>
+<h4 id="runs-steps-id"><a href="#runs-steps-id" class="headerlink" title="runs.steps[*].id"></a>runs.steps[*].id</h4><p>可选，步骤的唯一标识符。您可以使用<code>id</code>引用上下文中的步骤。</p>
+<h4 id="runs-steps-env"><a href="#runs-steps-env" class="headerlink" title="runs.steps[*].env"></a>runs.steps[*].env</h4><p>可选，设置环境变量的 map 仅用于该步骤。 如果要修改存储在工作流程中的环境变量，请在组合运行步骤中使用 echo “{name}&#x3D;{value}” &gt;&gt; $GITHUB_ENV。</p>
+<h4 id="runs-steps-working-directory"><a href="#runs-steps-working-directory" class="headerlink" title="runs.steps[*].working-directory"></a>runs.steps[*].working-directory</h4><p>可选，指定命令在其中运行的工作目录。</p>
+<h4 id="runs-steps-uses"><a href="#runs-steps-uses" class="headerlink" title="runs.steps[*].uses"></a>runs.steps[*].uses</h4><p>可选，选择作为作业步骤一部分运行的操作。操作是一种可重复使用的代码单位。您可以使用工作流程所在仓库中、公共仓库中或<a target="_blank" rel="noopener" href="https://hub.docker.com/">发布 Docker 容器映像</a>中定义的操作。<br>有些操作要求必须通过 with 关键词设置输入。</p>
+<h4 id="runs-steps-with"><a href="#runs-steps-with" class="headerlink" title="runs.steps[*].with"></a>runs.steps[*].with</h4><p>可选，输入参数的 map 由操作定义。 每个输入参数都是一个键&#x2F;值对。 输入参数被设置为环境变量。 该变量的前缀为 INPUT_，并转换为大写。</p>
+<h4 id="runs-steps-run"><a href="#runs-steps-run" class="headerlink" title="runs.steps[*].run"></a>runs.steps[*].run</h4><p>可选，需要运行的命令。这可以是内联的，也可以是操作仓库中的脚本：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">runs:</span><br>  <span class="hljs-attr">using:</span> <span class="hljs-string">&quot;composite&quot;</span> <span class="hljs-comment"># 必须设置 using 为 composite</span><br>  <span class="hljs-attr">steps:</span><br>    <span class="hljs-bullet">-</span> <span class="hljs-attr">run:</span> <span class="hljs-string">$&#123;&#123;</span> <span class="hljs-string">github.action_path</span> <span class="hljs-string">&#125;&#125;/test/script.sh</span> <span class="hljs-comment"># 运行一个脚本文件，关于 github.action_path @see https://docs.github.com/cn/actions/reference/context-and-expression-syntax-for-github-actions#github-context</span><br>      <span class="hljs-attr">shell:</span> <span class="hljs-string">bash</span> <span class="hljs-comment"># 指定终端</span><br></code></pre></td></tr></table></figure>
+
+<h4 id="runs-steps-shell"><a href="#runs-steps-shell" class="headerlink" title="runs.steps[*].shell"></a>runs.steps[*].shell</h4><p>可选，您想要在其中运行命令的<code>shell</code>。如果设置了<code>run</code>，则必填。<br><a target="_blank" rel="noopener" href="https://docs.github.com/cn/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idstepsshell">可选的shell</a></p>
+<h4 id="runs-steps-if"><a href="#runs-steps-if" class="headerlink" title="runs.steps[*].if"></a>runs.steps[*].if</h4><p>可选，使步骤仅在满足条件时才运行。您可以使用任何支持上下文和表达式来创建条件。<br>在 if 条件下使用表达式时，可以省略表达式语法<code>$&#123;&#123; &#125;&#125;</code>，因为 GitHub 会自动将<code>if</code>条件作为表达式求值。 更多信息请参阅<a target="_blank" rel="noopener" href="https://docs.github.com/cn/actions/learn-github-actions/expressions">表达式</a>。</p>
+<h3 id="用于-Docker-容器操作的-runs"><a href="#用于-Docker-容器操作的-runs" class="headerlink" title="用于 Docker 容器操作的 runs"></a>用于 Docker 容器操作的 runs</h3><p><strong>必要</strong>，配置用于 Docker 容器操作的图像。</p>
+<p>详见<a target="_blank" rel="noopener" href="https://docs.github.com/cn/actions/creating-actions/metadata-syntax-for-github-actions#runs-for-docker-container-actions">用于 Docker 容器操作的 runs</a></p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><p><a target="_blank" rel="noopener" href="https://docs.github.com/cn/actions">GitHub Actions</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://docs.github.com/cn/actions/creating-actions/creating-a-composite-action">创建组合式操作</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://docs.github.com/cn/actions/learn-github-actions/contexts">工作流程上下文</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://docs.github.com/cn/actions/creating-actions/metadata-syntax-for-github-actions">Github action的元数据语法</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://docs.github.com/cn/actions/using-workflows/workflow-commands-for-github-actions">GitHub Actions 的工作流程命令</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://docs.github.com/cn/actions/learn-github-actions/expressions#status-check-functions">Github action expressions</a></p>
+</li>
+</ul>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Github/" class="category-chain-item">Github</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Github/">#Github</a>
+      
+        <a href="/tags/Github-Actions/">#Github Actions</a>
+      
+        <a href="/tags/Deploy/">#Deploy</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>GitHub Actions</div>
+      <div>https://xiaoooyooo.github.io/2022/08/14/Github actions/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Xiaoooyooo</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年8月14日</div>
+        </div>
+      
+      
+      <div class="license-meta-item">
+        <div>许可协议</div>
+        <div>
+          
+            
+            
+              <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+              <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                <i class="iconfont icon-by"></i>
+              </span>
+              </a>
+            
+          
+        </div>
+      </div>
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/06/15/%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AAwebsocket%E6%9C%8D%E5%8A%A1%E5%99%A8/" title="如何实现一个websocket服务器">
+                        <span class="hidden-mobile">如何实现一个websocket服务器</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      headingSelector : CONFIG.toc.headingSelector || 'h1,h2,h3,h4,h5,h6',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      collapseDepth   : CONFIG.toc.collapseDepth || 0,
+      scrollSmooth    : true,
+      headingsOffset  : -boardTop
+    });
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+  });
+</script>
+
+
+  <script src=https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
