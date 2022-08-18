@@ -12,7 +12,7 @@ if [ ! -f $robots ]
 then
   echo "创建robots.txt"
   cat > $robots << EOF
-User-Agent: *
+User-agent: *
 Allow: /
 EOF
 fi
