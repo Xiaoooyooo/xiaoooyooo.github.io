@@ -1,6 +1,21 @@
-echo `yarn -v`;
+type yarn > /dev/null 2>&1;
+if [ $? -eq 0 ]
+then
+  yarn build
+else
+  npm run build
+fi
 
-yarn build;
+# SEO
+robots="`pwd`/docs/robots.txt"
+if [ ! -f $robots ]
+then
+  echo "创建robots.txt"
+  cat > $robots << EOF
+User-Agent: *
+Allow: /
+EOF
+fi
 
 git add .;
 
