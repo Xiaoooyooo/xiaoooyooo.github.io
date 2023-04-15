@@ -25,7 +25,7 @@ git commit -m "$msg";
 
 while true
 do
-  git push origin --set-upstream master;
+  git push origin master;
   if [ $? -eq 0 ]
   then
     echo -e "\e[32mPush to remote repository success\e[0m"

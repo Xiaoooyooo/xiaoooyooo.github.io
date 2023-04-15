@@ -10,7 +10,7 @@
     "push": "bash ./push.sh"
   },
   "hexo": {
-    "version": "6.3.0"
+    "version": "6.2.0"
   },
   "dependencies": {
     "hexo": "^6.3.0",
