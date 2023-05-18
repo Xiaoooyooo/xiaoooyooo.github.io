@@ -42,6 +42,35 @@ module.exports = {
 }
 ```
 
+`index.css`
+```css
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+```
+
+`main.tsx`
+```tsx
+import "./index.css";
+```
+
+`webpack.config.js`
+```js
+const minicss = require("mini-css-extract-plugin");
+
+module.exports = {
+  module: {
+    rules: [
+      {
+        test: /\.css$/,
+        // yarn add mini-css-extract-plugin css-loader postcss-loader --dev
+        use: [minicss.loader, "css-loader", "postcss-loader"],
+      },
+    ]
+  }
+}
+```
+
 ## 参考资料
 
 + [Get started with Tailwind CSS](https://tailwindcss.com/docs/installation)

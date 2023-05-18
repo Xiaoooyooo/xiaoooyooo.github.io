@@ -1,21 +1,13 @@
-type yarn > /dev/null 2>&1;
-if [ $? -eq 0 ]
-then
-  yarn build
-else
-  npm run build
-fi
-
-# SEO
-robots="`pwd`/docs/robots.txt"
-if [ ! -f $robots ]
-then
-  echo "创建robots.txt"
-  cat > $robots << EOF
-User-agent: *
-Allow: /
-EOF
-fi
+# # SEO
+# robots="`pwd`/docs/robots.txt"
+# if [ ! -f $robots ]
+# then
+#   echo "创建robots.txt"
+#   cat > $robots << EOF
+# User-agent: *
+# Allow: /
+# EOF
+# fi
 
 git add .;
 
