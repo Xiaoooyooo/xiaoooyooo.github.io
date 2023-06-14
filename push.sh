@@ -1,13 +1,4 @@
-# # SEO
-# robots="`pwd`/docs/robots.txt"
-# if [ ! -f $robots ]
-# then
-#   echo "创建robots.txt"
-#   cat > $robots << EOF
-# User-agent: *
-# Allow: /
-# EOF
-# fi
+#!/usr/bin/bash
 
 git add .;
 
